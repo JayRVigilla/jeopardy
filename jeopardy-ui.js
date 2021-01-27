@@ -15,28 +15,21 @@ $(async function () {
     async function fillTable() {
         // take glogal categories and an array of getCategoryIds()
         let catIds = await getCategoryIds(categories);
-        // console.log('cat IDs are', catIds);
         // create thead with a tr containing WIDTH*td
         let $topRail = $('.game-board').append("<thead class=\"top-rail\"></thead>");
         let $tableRow = $('.game-board thead').append("<tr></tr>");
         for (let id of catIds) {
             let catData = await getCategory(id);
-            // console.log('catData', catData);
             $('tr').append(`<td>${catData.title}</td>`)
         }
         $topRail.append($tableRow);
-        // console.log('table row', $tableRow);
-
-
 
         //create row of question cards from each category
-        // only need enough cards to fill HEIGHT of board, some categories have more than 5
         async function makeQuestionRow(catIDs, nthClue) {
             //go to each id in catIds and pull the Nth clue object inside to populate card
             for (let i = 0; i < catIDs.length; i++) {
                 let catData = await getCategory(catIds[i]);
-                // debugger
-                await $(`tr.${nthClue}`).append(`<td><div class="null"><i class="fas fa-question null"></i></div>
+                await $(`tr.${nthClue}`).append(`<td><div class="null value">${(nthClue + 1) * 100}</div>
                 <div class="question hidden">${catData.clues[nthClue].question}</div>
                 <div class="answer hidden">${catData.clues[nthClue].answer}</div>
                     </td >`);
@@ -44,9 +37,6 @@ $(async function () {
 
         }
         // // should make a row and give index of nthClue
-        // for (let row = 0; row < HEIGHT; row++) {
-        //     $('.game-board').append(await makeQuestionRow(catIds, row))
-        //     // $(this).addClass(`rowNum${row}`);
 
         for (let rows = 0; rows < HEIGHT; rows++) {
             $('.game-board').append(`<tr class="${rows}"></tr>`);
@@ -55,24 +45,26 @@ $(async function () {
 
     }
 
-
-
-
     /** Handle clicking on a clue: show the question or answer.
      *
      * Uses .showing property on clue to determine what to show:
-     * - if currently null, show question & set .showing to "question"
+     * - if currently null, show question && set .showing to "question"
      * - if currently "question", show answer & set .showing to "answer"
      * - if curerntly "answer", ignore click
      * */
     function handleClick(evt) {
+        const addPoints = (val) => $('#score').text((parseInt($('#score').text()) + parseInt(val)).toString())
+        const subtractPoints = (val) => $('#score').text((parseInt($('#score').text()) - parseInt(val)).toString())
+
         if (this.classList.contains('null')) {
-            $(this).hide();
-            $(this).siblings('div.question').show();
-            console.log("answer\n", $(this).siblings('div.answer').text())
+            const value = $(this).text()
             const answer = $(this).siblings('div.answer').text().toLowerCase()
             const guess = prompt($(this).siblings('div.question').text())
-            guess == null || guess.toLowerCase() !== answer ? console.log("WRONG!") : console.log("RIGHT!!")
+
+            $(this).hide();
+            $(this).siblings('div.question').show();
+
+            guess == null || guess.toLowerCase() !== answer ? subtractPoints(value) : addPoints(value)
             $(this).siblings('div.answer').show();
             $(this).siblings('div.question').addClass('asked');
         }
@@ -121,14 +113,4 @@ $(async function () {
         setupAndStart();
     });
     $('table').on("click", "div", handleClick);
-
-
-    /** On click of start / restart button, set up game. */
-
-    // TODO
-
-    /** On page load, add event handler to #game-board for clicking clues */
-
-    // TODO
-
 })
