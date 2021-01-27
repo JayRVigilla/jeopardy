@@ -6,6 +6,14 @@
   #74119c dark purple
 
 */
+:root{
+  --blue: #115ff4;
+  --dark-blue: #060ce9;
+  --green: #28a200;
+  --purple: #8d2ab5;
+  --dark-purple: #74119c;
+}
+
 
 .hidden{
   display: none
@@ -23,7 +31,7 @@
 }
 
 body{
-  background-color: #74119c;
+  background-color: var(--blue);
   color: white;
   display: flex;
   flex-direction: column;
@@ -37,6 +45,7 @@ table{
 thead{
   font-weight: bold;
   text-transform: capitalize;
+  background-color: var(--dark-blue);
 }
 
 .game-board{
@@ -57,6 +66,7 @@ td{
 .answer{
   font-style: italic;
   font-weight: bold;
+  text-transform: uppercase;
 }
 
 .asked{
@@ -66,4 +76,12 @@ td{
 .value{
   font-weight: bolder;
   font-size: xx-large;
+}
+
+.correct{
+  background-color: var(--green);
+}
+
+.incorrect{
+  background-color: red;
 }

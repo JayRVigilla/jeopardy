@@ -53,8 +53,14 @@ $(async function () {
      * - if curerntly "answer", ignore click
      * */
     function handleClick(evt) {
-        const addPoints = (val) => $('#score').text((parseInt($('#score').text()) + parseInt(val)).toString())
-        const subtractPoints = (val) => $('#score').text((parseInt($('#score').text()) - parseInt(val)).toString())
+        const correct = (val) => {
+            $('#score').text((parseInt($('#score').text()) + parseInt(val)).toString())
+            $(this).parent().addClass('correct')
+        }
+        const incorrect = (val) => {
+            $('#score').text((parseInt($('#score').text()) - parseInt(val)).toString())
+            $(this).parent().addClass('incorrect')
+        }
 
         if (this.classList.contains('null')) {
             const value = $(this).text()
@@ -64,7 +70,7 @@ $(async function () {
             $(this).hide();
             $(this).siblings('div.question').show();
 
-            guess == null || guess.toLowerCase() !== answer ? subtractPoints(value) : addPoints(value)
+            guess == null || guess.toLowerCase() !== answer ? incorrect(value) : correct(value)
             $(this).siblings('div.answer').show();
             $(this).siblings('div.question').addClass('asked');
         }
