@@ -3,6 +3,11 @@ $(async function () {
 
     const HEIGHT = 5;
     const WIDTH = 6;
+    let answer = '';
+    let guess = '';
+    let question = '';
+    let value = 0;
+    let lastClicked = undefined;
 
     /** Fill the HTML table#jeopardy with the categories & cells for questions.
      *
@@ -29,9 +34,9 @@ $(async function () {
             //go to each id in catIds and pull the Nth clue object inside to populate card
             for (let i = 0; i < catIDs.length; i++) {
                 let catData = await getCategory(catIds[i]);
-                await $(`tr.${nthClue}`).append(`<td><div class="null value">${(nthClue + 1) * 100}</div>
+                await $(`tr.${nthClue}`).append(`<td class="col-${nthClue} row-${i}"><div class="null value col-${nthClue} row-${i}">${(nthClue + 1) * 100}</div>
                 <div class="question hidden">${catData.clues[nthClue].question}</div>
-                <div class="answer hidden">${catData.clues[nthClue].answer}</div>
+                <div class="answer col-${nthClue} row-${i} hidden">${catData.clues[nthClue].answer}</div>
                     </td >`);
             }
 
@@ -50,33 +55,50 @@ $(async function () {
      * Uses .showing property on clue to determine what to show:
      * - if currently null, show question && set .showing to "question"
      * - if currently "question", show answer & set .showing to "answer"
-     * - if curerntly "answer", ignore click
+     * - if currently "answer", ignore click
      * */
     function handleClick(evt) {
-        const correct = (val) => {
-            $('#score').text((parseInt($('#score').text()) + parseInt(val)).toString())
-            $(this).parent().addClass('correct')
-        }
-        const incorrect = (val) => {
-            $('#score').text((parseInt($('#score').text()) - parseInt(val)).toString())
-            $(this).parent().addClass('incorrect')
-        }
+        $("#your-answer").show()
 
         if (this.classList.contains('null')) {
-            const value = $(this).text()
-            const answer = $(this).siblings('div.answer').text().toLowerCase()
-            const guess = prompt($(this).siblings('div.question').text())
+            value = $(this).text()
+            answer = $(this).siblings('div.answer').text().toLowerCase()
+            question = $(this).siblings('div.question').text()
+
+            const altAnsPos = answer.indexOf("(")
+            console.log(`altAnsPos ${altAnsPos}`)
+
+            if (altAnsPos > -1) {
+                let altAnsArr = answer.substring(altAnsPos + 4).split(",")
+                console.log("altAnsArr", Array.isArray(altAnsArr))
+                altAnsArr.push(answer.substring(0, altAnsPos - 1))
+                const answers = altAnsArr.map(ans => ans.trim())
+                console.log("answers", answers)
+            }
 
             $(this).hide();
             $(this).siblings('div.question').show();
-
-            guess == null || guess.toLowerCase() !== answer ? incorrect(value) : correct(value)
-            $(this).siblings('div.answer').show();
-            $(this).siblings('div.question').addClass('asked');
+            $('#your-clue').text(question)
+            lastClicked = $(evt.target).siblings('div.answer')
         }
     }
 
+    function handleGuess() {
+        const correct = (val) => {
+            $('#score').text((parseInt($('#score').text()) + parseInt(val)).toString())
+            $(lastClicked).addClass('correct')
+        }
+        const incorrect = (val) => {
+            $('#score').text((parseInt($('#score').text()) - parseInt(val)).toString())
+            $(lastClicked).addClass('incorrect')
+        }
+        guess = $('#guess').val()
+        guess == null || guess.toLowerCase() !== answer ? incorrect(value) : correct(value)
+        $(lastClicked).show()
 
+        $('#your-answer').hide()
+        $('#guess').val('')
+    }
     /** Wipe the current Jeopardy board, show the loading spinner,
      * and update the button used to fetch data.
      */
@@ -109,14 +131,15 @@ $(async function () {
 
     function setupAndStart() {
         $(".game-board").hide();
-        fillTable();
         showLoadingView();
+        fillTable();
         setTimeout(hideLoadingView, 3000);
     }
-
+    hideLoadingView()
     $('body').on('click', '#start', function (evt) {
         $('.game-board').empty();
         setupAndStart();
     });
     $('table').on("click", "div", handleClick);
+    $('#your-answer').on("click", 'button', handleGuess)
 })

@@ -16,18 +16,20 @@
 <button id="start">Start Game</button></div>
 
 <div>Score: <span id="score">0</span></div>
-
 <div class='hidden loading'>
       <i class="fas fa-spinner"></i><div>Loading...</div>
 </div>
 
-<div class='hidden' id="game">
+<div id="your-answer" class="hidden">
+	<p>Your Clue:</p>
+	<i><p id="your-clue"></p></i>
 	<form action="#">
 		<label for="guesses">Your answer</label>
 		<input type="text" id="guess">
+		<button>Submit</button>
 	</form>
 </div>
-	<table class='game-board hidden' border="1"></table>
+	<table class='game-board hidden'></table>
 
 
 

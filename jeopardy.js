@@ -23,11 +23,12 @@ const BASE_URL = "http://jservice.io/api/"
 let categories = getCategoryIds;
 
 
+
 /** Get NUM_CATEGORIES random category from API.
  *
  * Returns array of category ids
  */
-// use LODASH: 
+// use LODASH:
 // get list of 100 (max limit) categories
 // .shuffle() the big array
 // if categories.length < 6 get more random categories, ELSE
@@ -41,16 +42,10 @@ async function getCategoryIds() {
             count: 100,
         }
     });
-    // shuffle all of the categories using Lodash
     let categories = _.shuffle(response.data);
-    // keep the first 6, get rid of the rest
     categories.splice(6, 99);
-    // console.log(categories);
     let catIds = [];
-    for (let category of categories) {
-        catIds.push(category.id);
-    }
-    // console.log(catIds);
+    for (let category of categories) catIds.push(category.id);
     return catIds;
 }
 
@@ -96,56 +91,3 @@ async function getCategory(catId) {
     };
     return catData;
 }
-
-
-
-
-
-
-//*****************************************************************
-//*****************************************************************
-//***comenting out original code that got moved to another file, keep as ref 
-//reads like all DOM stuff, **make into another file**
-// async function fillTable() {
-// }
-
-// /** Handle clicking on a clue: show the question or answer.
-//  *
-//  * Uses .showing property on clue to determine what to show:
-//  * - if currently null, show question & set .showing to "question"
-//  * - if currently "question", show answer & set .showing to "answer"
-//  * - if curerntly "answer", ignore click
-//  * */
-
-// function handleClick(evt) {
-// }
-
-// /** Wipe the current Jeopardy board, show the loading spinner,
-//  * and update the button used to fetch data.
-//  */
-
-// function showLoadingView() {
-
-// }
-
-// /** Remove the loading spinner and update the button used to fetch data. */
-
-// function hideLoadingView() {
-// }
-
-// /** Start game:
-//  *
-//  * - get random category Ids
-//  * - get data for each category
-//  * - create HTML table
-//  * */
-
-// async function setupAndStart() {
-// }
-// /** On click of start / restart button, set up game. */
-
-// // TODO
-
-// /** On page load, add event handler for clicking clues */
-
-// // TODO
