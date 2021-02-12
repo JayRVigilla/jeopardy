@@ -95,6 +95,7 @@ $(async function () {
         guess = $('#guess').val()
         guess == null || guess.toLowerCase() !== answer ? incorrect(value) : correct(value)
         $(lastClicked).show()
+        $(lastClicked).parent().addClass('asked')
 
         $('#your-answer').hide()
         $('#guess').val('')
@@ -108,7 +109,7 @@ $(async function () {
         $('.fas').animate(
             { deg: 720 },
             {
-                duration: 3000,
+                duration: 4500,
                 step: function (now) {
                     $(this).css({ transform: 'rotate(' + now + 'deg)' });
                 }
@@ -133,7 +134,7 @@ $(async function () {
         $(".game-board").hide();
         showLoadingView();
         fillTable();
-        setTimeout(hideLoadingView, 3000);
+        setTimeout(hideLoadingView, 4000);
     }
     hideLoadingView()
     $('body').on('click', '#start', function (evt) {
